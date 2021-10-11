@@ -12,13 +12,11 @@ import java.util.*
 class MainViewModel : ViewModel() {
     private lateinit var context: Context
     private var repository: HomeRepositoryImpl = HomeRepositoryImpl()
-    lateinit var satellites: MutableLiveData<MutableList<Satellite>>
-    lateinit var selectedSatellite: MutableLiveData<Satellite>
-    lateinit var satellitePosition: MutableLiveData<Position>
+    var satellites: MutableLiveData<MutableList<Satellite>> = MutableLiveData()
+    var selectedSatellite: MutableLiveData<Satellite>  =  MutableLiveData()
+    var satellitePosition: MutableLiveData<Position> =  MutableLiveData()
     val _isLoading = MutableLiveData<Boolean>()
 
-    val _seconds = MutableLiveData<Int>()
-    private lateinit var timer: CountDownTimer
     private lateinit var nTimer: Timer
     var selectedPositionId = 0
     fun setIsLoading(value: Boolean) {
@@ -31,29 +29,30 @@ class MainViewModel : ViewModel() {
 
     fun getSatellites() {
         viewModelScope.launch {
-            satellites = MutableLiveData(repository.getSatellites(context, false))
+            satellites.value =repository.getSatellites(context, false)
         }
     }
     fun getSatelliteDetail(id: Int) {
         viewModelScope.launch {
-            selectedSatellite = MutableLiveData(repository.getSatellitesDetail(context, id))
+            selectedSatellite.value =repository.getSatellitesDetail(context, id)
         }
     }
     fun getSatellitePosition(satelliteid:Int,positionId:Int) {
         viewModelScope.launch {
-            satellitePosition = MutableLiveData(repository.getSatellitesPosition(context, satelliteid,positionId))
+            var nPosition = repository.getSatellitesPosition(context, satelliteid,positionId)
+            satellitePosition.value = nPosition
         }
     }
 
-    fun getLastPositionTimer(selectedId:Int){
+    fun setLastPositionTimer(selectedId:Int){
         nTimer = Timer()
-        nTimer.scheduleAtFixedRate(object :TimerTask(){
+        nTimer.schedule(object :TimerTask(){
             override fun run() {
                 if(selectedPositionId > 2){
                     selectedPositionId=0
                 }
-                selectedPositionId ++
                 getSatellitePosition(selectedId,selectedPositionId)
+                selectedPositionId ++
             }
 
         },0,1000)

@@ -29,7 +29,7 @@ class DetailFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        var view = inflater.inflate(R.layout.fragment_detail, container, false)
+        val view = inflater.inflate(R.layout.fragment_detail, container, false)
         return view
     }
 
@@ -40,6 +40,7 @@ class DetailFragment : Fragment() {
             mainViewModel.setIsLoading(true)
             mainViewModel.getSatelliteDetail(selectedId)
             mainViewModel.getSatellitePosition(selectedId,0)
+            mainViewModel.setLastPositionTimer(selectedId)
         }
         observeSharedLiveData()
     }
@@ -51,25 +52,23 @@ class DetailFragment : Fragment() {
                 hideAll()
                 txtLoadingDetail.visibility = View.VISIBLE
                 progressBarDetail.visibility = View.VISIBLE
-
             }else {
                 txtLoadingDetail.visibility = View.GONE
                 progressBarDetail.visibility = View.GONE
                 showAll()
             }
         })
+
         mainViewModel.selectedSatellite.observe(viewLifecycleOwner, Observer {
             if (it !=null){
                 txtName.text = it.name
                 txtFirstFlight.text = it.first_flight
                 txtCost.text = it.cost_per_launch.toString()
                 txtMass.text = "${it.height }/${it.mass}"
-                mainViewModel.getLastPositionTimer(it.id)
                 mainViewModel.setIsLoading(false)
             }
         })
         mainViewModel.satellitePosition.observe(viewLifecycleOwner, Observer {
-            println("Pozisyon" + it.X + " - " + it.Y)
             txtPosition.text = "(${it.X},${it.Y})"
         })
     }
