@@ -7,6 +7,10 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
+import android.widget.SearchView
+import androidx.core.widget.addTextChangedListener
+import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.erol.teknafly.R
@@ -14,6 +18,7 @@ import com.erol.teknafly.data.model.Satellite
 import com.erol.teknafly.ui.viewModel.MainViewModel
 import kotlinx.android.synthetic.main.fragment_detail.*
 import kotlinx.android.synthetic.main.fragment_home.*
+import kotlinx.android.synthetic.main.fragment_home.view.*
 import kotlinx.android.synthetic.main.recycler_item.*
 
 class DetailFragment : Fragment() {
@@ -42,6 +47,7 @@ class DetailFragment : Fragment() {
             mainViewModel.getSatellitePosition(selectedId,0)
             mainViewModel.setLastPositionTimer(selectedId)
         }
+
         observeSharedLiveData()
     }
 
